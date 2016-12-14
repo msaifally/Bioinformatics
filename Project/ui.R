@@ -11,19 +11,29 @@ library(shiny)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
+  #theme = "bootstrapfile:///C:/Users/user/Desktop/R-github/Bioinformatics/Project/www/bootstrap-3.3.7-dist/css/bootstrap.css",
   
+includeCSS("style.css"),
+                  
+  headerPanel("SM ARRAY"),
   # Application title
-  titlePanel("SM ARRAY"),
+  
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
-    sidebarPanel(
-       "NOTHING TO DIS[;AY"
+    sidebarPanel( id = "sidebar" ,
+       img(src="yas.jpg", height = 300, width = 265)
     ),
     
     # Show a plot of the generated distribution
-    mainPanel(
-       plotOutput("TABSET PANEL COMING SOON")
+    mainPanel(id= "main-panel",
+      tabsetPanel(
+        tabPanel("Home","Shiny is a free web app which allows to perform gene selection"),
+        tabPanel("Preprocessing"),
+        tabPanel("Gene Selection"),
+        tabPanel("Output")
+        )
+        
     )
   )
 ))
