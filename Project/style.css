@@ -8,15 +8,16 @@ h1 {
 }
 
 body {
-  background-color: #A08E8A;
+  background-color: #CAC4C4;
 }
 
 #sidebar
 {
-background-color: blue;
+background-color: #E0D6D6;
 }
 
 #main-panel
 {
-background-color: red;
+background-color: #E0D6D6;
+width:3;
 }
