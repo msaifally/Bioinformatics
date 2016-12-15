@@ -11,7 +11,7 @@ library(shiny)
 
 
 shinyUI(fluidPage(title="Testing", 
-                  navbarPage("SM ARRAY", theme="bootstrap.css",
+                  navbarPage(inverse=TRUE,title=div(img(src="3.jpg")),
                              tabPanel("Home ",helpText("Tsssesting")),
                              tabPanel("Prepocessing",helpText("Testidsadng")),
                              tabPanel("Gene Selection", helpText("Testing")),
