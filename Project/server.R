@@ -35,6 +35,7 @@ shinyServer(function(input, output,session) {
       
       
     }
+
   )
   output$table1 <- renderTable(
     {
@@ -52,9 +53,9 @@ shinyServer(function(input, output,session) {
                                                          input$pheno$name[i]))
              })
       
-      read.table(file = input$pheno$datapath,sep = "|", fill=TRUE)
+      read.table(file = input$pheno$datapath,sep = "", fill=TRUE)
       
-    }
+    },bordered = TRUE,striped = TRUE,align = 'c',spacing = c("s", "xs", "m", "l"),rownames = FALSE,colnames = TRUE,hover=TRUE
   )
   
   
