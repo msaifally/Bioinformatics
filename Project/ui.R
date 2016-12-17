@@ -6,19 +6,21 @@
 # 
 #    http://shiny.rstudio.com/
 #
-#load the shiny package
+
 library(shiny)
 library(shinyjs)
+library(R.utils)
 
 shinyUI(fluidPage(title="Testing", useShinyjs(),
                   navbarPage(id = "navbar",inverse=TRUE,title=div(img(src="logo.jpg")),
-                            #panel Home
-                             tabPanel(title ="Home",actionButton("btnPrepocessing", "Prepocessing")),
-                            #panel Prepocessing 
-                            tabPanel(title = "Prepocessing",value= "tabPreprocessing",actionButton("btnGeneSelection", "Gene Selection")),
-                            #panel Gene- Selection
-                            tabPanel("Gene Selection", value = "tabGeneSelection",actionButton("btnPlot", "Plot")),
-                            #Panel Plot
+                             #panel Home
+                             tabPanel(title ="Home",actionButton("btnPrepocessing", "Prepocessing"),fileInput("file","Input zip cel files"),
+                                      fileInput("pheno","Input phenodata file"),tableOutput("table"),tableOutput("table1")),
+                             #panel Prepocessing 
+                             tabPanel(title = "Prepocessing",value= "tabPreprocessing",actionButton("btnGeneSelection", "Gene Selection")),
+                             #panel Gene- Selection
+                             tabPanel("Gene Selection", value = "tabGeneSelection",actionButton("btnPlot", "Plot")),
+                             #Panel Plot
                              tabPanel("Plot", value = "tabPlot",actionButton("btnBack", "Back"))
                              
                   )))
