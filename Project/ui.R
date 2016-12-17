@@ -14,12 +14,33 @@ library(R.utils)
 shinyUI(fluidPage(title="Testing", useShinyjs(),
                   navbarPage(id = "navbar",inverse=TRUE,title=div(img(src="logo.jpg")),
                              #panel Home
-                             tabPanel(title ="Home",actionButton("btnPrepocessing", "Prepocessing"),fileInput("file","Input zip cel files"),
-                                      fileInput("pheno","Input phenodata file"),
-                                      tabsetPanel(
-                                        tabPanel("FILE", tableOutput("table")),
-                                        tabPanel("Phenodata", tableOutput("table1"))
-                                      )),
+                             tabPanel(title ="Home",
+                                      #sidebar panel
+                                      sidebarPanel(
+                                        fileInput("file","Input zip cel files"),
+                                        fileInput("pheno","Input phenodata file")
+                                        )#sidebar panel ends here.
+                                      #main panel 
+                                       ,mainPanel(
+                                         tabsetPanel(
+                                           tabPanel("FILE", tableOutput("table")),
+                                           tabPanel("Phenodata", tableOutput("table1"))
+                                         )
+                                       )#main panel ends here
+                                      
+                                      
+                                      ,  tags$footer(actionButton("btnPrepocessing", "Prepocessing",class="btn-info",icon = icon("mail-forward")),
+                                          align = "center", 
+                                          style = "position:absolute;
+                                                     bottom:0;
+                                                     width:100%;
+                                                     height:50px;   /* Height of the footer */
+                                                     color: white;
+                                                     padding: 10px;
+                                                     background-color: white;
+                                                     z-index: 1000;")
+                                      ),#panel home ends here
+                                    
                              #panel Prepocessing 
                              tabPanel(title = "Prepocessing",value= "tabPreprocessing",actionButton("btnGeneSelection", "Gene Selection")),
                              #panel Gene- Selection
