@@ -15,7 +15,11 @@ shinyUI(fluidPage(title="Testing", useShinyjs(),
                   navbarPage(id = "navbar",inverse=TRUE,title=div(img(src="logo.jpg")),
                              #panel Home
                              tabPanel(title ="Home",actionButton("btnPrepocessing", "Prepocessing"),fileInput("file","Input zip cel files"),
-                                      fileInput("pheno","Input phenodata file"),tableOutput("table"),tableOutput("table1")),
+                                      fileInput("pheno","Input phenodata file"),
+                                      tabsetPanel(
+                                        tabPanel("FILE", tableOutput("table")),
+                                        tabPanel("Phenodata", tableOutput("table1"))
+                                      )),
                              #panel Prepocessing 
                              tabPanel(title = "Prepocessing",value= "tabPreprocessing",actionButton("btnGeneSelection", "Gene Selection")),
                              #panel Gene- Selection
