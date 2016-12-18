@@ -16,47 +16,114 @@ library(R.utils)
 
 
 options(shiny.maxRequestSize=500*1024^2)
-# Define server logic required to draw a histogram
 shinyServer(function(input, output,session) {
+  celfiles=NULL
+  count<-0;
   
-  output$table <- renderTable(
-    {
-      
-      
-      if (is.null(input$file)){
-        return(NULL)
-      }
-      untar(input$file$datapath,exdir="data")
-      
-      
-      cels <- list.files("data/", pattern = "[gz]")
-      sapply(paste("data", cels, sep="/"), gunzip)
-      cels
-      
-      
+  filedata <- reactive({
+    infile <- input$file
+    if (is.null(infile)){
+      return(NULL)      
     }
+    
+    untar(input$file$datapath,exdir="data")
+    cels <- list.files("data/", pattern = "[gz]")
+    sapply(paste("data", cels, sep="/"), gunzip)
+    celfiles<-cels
+     
+  })
+  output$fileTable<-renderTable({filedata()})
+  
+  filepheno <- reactive({
+    infile <- input$pheno
+    if (is.null(infile)){
+      return(NULL)      
+    }
+    
+    sapply(1:nrow(input$pheno), 
+                      FUN=function(i) {
+                       file.copy(input$pheno$datapath[i], paste0("data", sep ="/",
+                                                                   input$pheno$name[i]))
+                      })
+               
+               read.table(file = input$pheno$datapath,sep = "", fill=TRUE)
+    
+  })
+  output$phenoTable<-renderTable({filepheno()},bordered = TRUE)
+  # output$fileTable <- renderTable(
+  #   {
+  # 
+  #     if (is.null(input$file)){
+  #       return(NULL)
+  #     }
+  #     count <<- 1
+  # 
+  #     untar(input$file$datapath,exdir="data")
+  # 
+  # 
+  #     cels <- list.files("data/", pattern = "[gz]")
+  #     sapply(paste("data", cels, sep="/"), gunzip)
+  #     celfiles<-cels
+  # 
+  # 
+  #   }
+  # 
+  # )
 
-  )
-  output$table1 <- renderTable(
-    {
-      
-      
-      if(is.null(input$pheno)){
-        return(NULL)
+  # output$phenoTable <- renderTable(
+  #   {
+  #     
+  #   
+  #     
+  #     if(is.null(input$pheno)){
+  #       return(NULL)
+  #     }
+  #     
+  #     count <<- 2
+  #     
+  #     
+  #     sapply(1:nrow(input$pheno), 
+  #            FUN=function(i) {
+  #              file.copy(input$pheno$datapath[i], paste0("data", sep ="/",
+  #                                                        input$pheno$name[i]))
+  #            })
+  #     
+  #     read.table(file = input$pheno$datapath,sep = "", fill=TRUE)
+  #     
+  #   },bordered = TRUE,striped = TRUE,align = 'c',spacing = c("s", "xs", "m", "l"),rownames = FALSE,colnames = TRUE,hover=TRUE
+  # )
+  
+  
+      if (count==2)
+      {
+        library(simpleaffy)
+        celfiles
+        celfiles <- read.affy(covdesc="phenodata.txt", path="data")
+        celfiles.gcrma <- gcrma(celfiles)
+        library(RColorBrewer)
+        # set colour palette
+        cols <- brewer.pal(8, "Set1")
+        # plot a boxplot of unnormalised intensity values
+        
+        output$mpgPlot <- renderPlot({
+          boxplot(celfiles, col=cols)
+        })
+        
       }
       
-      
-      
-      sapply(1:nrow(input$pheno), 
-             FUN=function(i) {
-               file.copy(input$pheno$datapath[i], paste0("data", sep ="/",
-                                                         input$pheno$name[i]))
-             })
-      
-      read.table(file = input$pheno$datapath,sep = "", fill=TRUE)
-      
-    },bordered = TRUE,striped = TRUE,align = 'c',spacing = c("s", "xs", "m", "l"),rownames = FALSE,colnames = TRUE,hover=TRUE
-  )
+  
+  
+  
+  #plot a boxplot of normalised intensity values, affyPLM is required to interrogate celfiles.gcrma
+  #library(affyPLM)
+  #boxplot(celfiles.gcrma, col=cols)
+  # the boxplots are somewhat skewed by the normalisation algorithm
+  # and it is often more informative to look at density plots
+  # Plot a density vs log intensity histogram for the unnormalised data
+  #hist(celfiles, col=cols)
+  #Plot a density vs log intensity histogram for the normalised data
+  #hist(celfiles.gcrma, col=cols)
+  
   
   
   #hide tabs
