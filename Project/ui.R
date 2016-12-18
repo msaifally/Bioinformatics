@@ -31,7 +31,7 @@ shinyUI(fluidPage(title="Testing", useShinyjs(),
                                        )#main panel ends here
                                       
                                       
-                                      ,  tags$footer(actionButton("btnPrepocessing", "Prepocessing",class="btn-info",icon = icon("mail-forward")),
+                                      ,  tags$footer(uiOutput('ui.action'),
                                           align = "center", 
                                           style = "position:absolute;
                                                      bottom:0;

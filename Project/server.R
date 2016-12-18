@@ -17,8 +17,7 @@ library(R.utils)
 
 options(shiny.maxRequestSize=500*1024^2)
 shinyServer(function(input, output,session) {
-  celfiles=NULL
-  count<-0;
+  
   
   filedata <- reactive({
     infile <- input$file
@@ -50,66 +49,32 @@ shinyServer(function(input, output,session) {
     
   })
   output$phenoTable<-renderTable({filepheno()},bordered = TRUE)
-  # output$fileTable <- renderTable(
-  #   {
-  # 
-  #     if (is.null(input$file)){
-  #       return(NULL)
-  #     }
-  #     count <<- 1
-  # 
-  #     untar(input$file$datapath,exdir="data")
-  # 
-  # 
-  #     cels <- list.files("data/", pattern = "[gz]")
-  #     sapply(paste("data", cels, sep="/"), gunzip)
-  #     celfiles<-cels
-  # 
-  # 
-  #   }
-  # 
-  # )
 
-  # output$phenoTable <- renderTable(
-  #   {
-  #     
-  #   
-  #     
-  #     if(is.null(input$pheno)){
-  #       return(NULL)
-  #     }
-  #     
-  #     count <<- 2
-  #     
-  #     
-  #     sapply(1:nrow(input$pheno), 
-  #            FUN=function(i) {
-  #              file.copy(input$pheno$datapath[i], paste0("data", sep ="/",
-  #                                                        input$pheno$name[i]))
-  #            })
-  #     
-  #     read.table(file = input$pheno$datapath,sep = "", fill=TRUE)
-  #     
-  #   },bordered = TRUE,striped = TRUE,align = 'c',spacing = c("s", "xs", "m", "l"),rownames = FALSE,colnames = TRUE,hover=TRUE
-  # )
+  output$ui.action <- renderUI({
+    if (is.null(input$file) || is.null(input$pheno) ) return()
+    actionButton("btnPrepocessing", "Prepocessing",class="btn-info",icon = icon("mail-forward"))
+  })
   
-  
-      if (count==2)
-      {
-        library(simpleaffy)
-        celfiles
-        celfiles <- read.affy(covdesc="phenodata.txt", path="data")
-        celfiles.gcrma <- gcrma(celfiles)
-        library(RColorBrewer)
-        # set colour palette
-        cols <- brewer.pal(8, "Set1")
-        # plot a boxplot of unnormalised intensity values
-        
-        output$mpgPlot <- renderPlot({
-          boxplot(celfiles, col=cols)
-        })
-        
-      }
+  observe({
+    
+    if (!is.null(input$file) && !is.null(input$pheno) ) 
+    {
+      library(simpleaffy)
+      celfiles
+      celfiles <- read.affy(covdesc="phenodata.txt", path="data")
+      celfiles.gcrma <- gcrma(celfiles)
+      library(RColorBrewer)
+      # set colour palette
+      cols <- brewer.pal(8, "Set1")
+      # plot a boxplot of unnormalised intensity values
+      
+      output$mpgPlot <- renderPlot({
+        boxplot(celfiles, col=cols)
+      })
+      
+    }
+  })
+ 
       
   
   
