@@ -46,6 +46,8 @@ shinyServer(function(input, output,session) {
                       })
                
                read.table(file = input$pheno$datapath,sep = "", fill=TRUE)
+               
+               
     
   })
   output$phenoTable<-renderTable({filepheno()},bordered = TRUE)
@@ -54,26 +56,28 @@ shinyServer(function(input, output,session) {
     if (is.null(input$file) || is.null(input$pheno) ) return()
     actionButton("btnPrepocessing", "Prepocessing",class="btn-info",icon = icon("mail-forward"))
   })
+
   
-  observe({
-    
-    if (!is.null(input$file) && !is.null(input$pheno) ) 
-    {
-      library(simpleaffy)
-      celfiles
-      celfiles <- read.affy(covdesc="phenodata.txt", path="data")
-      celfiles.gcrma <- gcrma(celfiles)
-      library(RColorBrewer)
-      # set colour palette
-      cols <- brewer.pal(8, "Set1")
-      # plot a boxplot of unnormalised intensity values
-      
-      output$mpgPlot <- renderPlot({
-        boxplot(celfiles, col=cols)
-      })
-      
-    }
-  })
+  # observe({
+  # 
+  #   if (!is.null(input$file) && !is.null(input$pheno) )
+  # 
+  #   {
+  #     library(simpleaffy)
+  #     celfiles
+  #     celfiles <- read.affy(covdesc="phenodata.txt", path="data")
+  #     celfiles.gcrma <- gcrma(celfiles)
+  #     library(RColorBrewer)
+  #     # set colour palette
+  #     cols <- brewer.pal(8, "Set1")
+  #     # plot a boxplot of unnormalised intensity values
+  # 
+  #     output$mpgPlot <- renderPlot({
+  #       boxplot(celfiles, col=cols)
+  #     })
+  # 
+  #   }
+  # })
  
       
   
@@ -156,7 +160,7 @@ shinyServer(function(input, output,session) {
       show(selector = "#navbar li a[data-value=tabPlot]")
       
     })
-    
+
   })
   
   ####################################################################################

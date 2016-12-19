@@ -22,12 +22,9 @@ shinyUI(fluidPage(title="Testing", useShinyjs(),
                                         )#sidebar panel ends here.
                                       #main panel 
                                        ,mainPanel(
-                                         tabsetPanel(
-                                           tabPanel("FILE", tableOutput("fileTable")),
-                                           tabPanel("Phenodata", tableOutput("phenoTable")),
-                                           tabPanel("Plot", plotOutput("mpgPlot"))
+                                  
                                            
-                                         )
+                                        
                                        )#main panel ends here
                                       
                                       
