@@ -19,18 +19,20 @@ shinyUI(fluidPage(title="Testing", useShinyjs(),
                                       sidebarPanel(
                                         fileInput("file","Input zip cel files"),
                                         fileInput("pheno","Input phenodata file")
-                                        )#sidebar panel ends here.
+                                      )#sidebar panel ends here.
                                       #main panel 
-                                       ,mainPanel(
-                                  
-                                           
-                                        
-                                       )#main panel ends here
+                                      ,mainPanel(
+                                        tabsetPanel(id="pa",
+                                                    tabPanel("FILE", value="b",tableOutput("fileTable")),
+                                                    tabPanel("Phenodata",value="a" ,tableOutput("phenoTable"))
+
+                                        )
+                                      )#main panel ends here
                                       
                                       
-                                      ,  tags$footer(uiOutput('ui.action'),
-                                          align = "center", 
-                                          style = "position:absolute;
+                                      ,  tags$footer(actionButton("btnPrepocessing", "Prepocessing",class="btn-info",icon = icon("mail-forward")),
+                                                     align = "center", 
+                                                     style = "position:absolute;
                                                      bottom:0;
                                                      width:100%;
                                                      height:50px;   /* Height of the footer */
@@ -39,12 +41,18 @@ shinyUI(fluidPage(title="Testing", useShinyjs(),
                                                      background-color: white;
                                                      z-index: 1000;")
                                       ),#panel home ends here
-                                    
+                             
                              #panel Prepocessing 
-                             tabPanel(title = "Prepocessing",value= "tabPreprocessing",actionButton("btnGeneSelection", "Gene Selection")),
+                             tabPanel(title = "Prepocessing",value= "tabPreprocessing",actionButton("btnGeneSelection", "Gene Selection"),
+                                      tabsetPanel(
+                                        tabPanel(title="Boxplot","Before Normalisation",plotOutput("boxPlot1"),
+                                                 "After Normalisation", plotOutput("boxplot2")),
+                                        tabPanel(title="Histogram","Before Normalisation",plotOutput("histogram1"),
+                                                 "After Normalisation", plotOutput("histogram2"))
+                                      )),
                              #panel Gene- Selection
                              tabPanel("Gene Selection", value = "tabGeneSelection",actionButton("btnPlot", "Plot")),
                              #Panel Plot
                              tabPanel("Plot", value = "tabPlot",actionButton("btnBack", "Back"))
                              
-                  )))
+                                      )))

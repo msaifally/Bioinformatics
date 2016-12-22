@@ -17,7 +17,8 @@ library(R.utils)
 
 options(shiny.maxRequestSize=500*1024^2)
 shinyServer(function(input, output,session) {
-  
+  celfiles=NULL
+  count<-0;
   
   filedata <- reactive({
     infile <- input$file
@@ -29,9 +30,9 @@ shinyServer(function(input, output,session) {
     cels <- list.files("data/", pattern = "[gz]")
     sapply(paste("data", cels, sep="/"), gunzip)
     celfiles<-cels
-     
+    
   })
-  output$fileTable<-renderTable({filedata()})
+  
   
   filepheno <- reactive({
     infile <- input$pheno
@@ -40,58 +41,41 @@ shinyServer(function(input, output,session) {
     }
     
     sapply(1:nrow(input$pheno), 
-                      FUN=function(i) {
-                       file.copy(input$pheno$datapath[i], paste0("data", sep ="/",
-                                                                   input$pheno$name[i]))
-                      })
-               
-               read.table(file = input$pheno$datapath,sep = "", fill=TRUE)
-               
-               
+           FUN=function(i) {
+             file.copy(input$pheno$datapath[i], paste0("data", sep ="/",
+                                                       input$pheno$name[i]))
+           })
+    
+    read.table(file = input$pheno$datapath,sep = "", fill=TRUE)
     
   })
-  output$phenoTable<-renderTable({filepheno()},bordered = TRUE)
-
-  output$ui.action <- renderUI({
-    if (is.null(input$file) || is.null(input$pheno) ) return()
-    actionButton("btnPrepocessing", "Prepocessing",class="btn-info",icon = icon("mail-forward"))
+  
+  observe({
+    if (is.null(input$pheno)) return()
+    updateTabsetPanel(session, "pa",selected = "a")
+    output$phenoTable<-renderTable({filepheno()},bordered = TRUE)
+    
+    
   })
-
   
-  # observe({
-  # 
-  #   if (!is.null(input$file) && !is.null(input$pheno) )
-  # 
-  #   {
-  #     library(simpleaffy)
-  #     celfiles
-  #     celfiles <- read.affy(covdesc="phenodata.txt", path="data")
-  #     celfiles.gcrma <- gcrma(celfiles)
-  #     library(RColorBrewer)
-  #     # set colour palette
-  #     cols <- brewer.pal(8, "Set1")
-  #     # plot a boxplot of unnormalised intensity values
-  # 
-  #     output$mpgPlot <- renderPlot({
-  #       boxplot(celfiles, col=cols)
-  #     })
-  # 
-  #   }
-  # })
+  observe({
+    if (is.null(input$file)) return()
+    updateTabsetPanel(session, "pa",selected = "b")
+    output$fileTable<-renderTable({filedata()},bordered = TRUE)    
+    
+  })
  
-      
+  
+  
+  if (count==2)
+  {
+  
+    
+  }
   
   
   
-  #plot a boxplot of normalised intensity values, affyPLM is required to interrogate celfiles.gcrma
-  #library(affyPLM)
-  #boxplot(celfiles.gcrma, col=cols)
-  # the boxplots are somewhat skewed by the normalisation algorithm
-  # and it is often more informative to look at density plots
-  # Plot a density vs log intensity histogram for the unnormalised data
-  #hist(celfiles, col=cols)
-  #Plot a density vs log intensity histogram for the normalised data
-  #hist(celfiles.gcrma, col=cols)
+ 
   
   
   
@@ -108,17 +92,51 @@ shinyServer(function(input, output,session) {
     # Move to results page
     updateNavbarPage(session, "navbar", selected="tabPreprocessing")
     
-    withProgress(message = "Computing results", detail = "fetching data", value = 0, {
-      
+    withProgress(message = "Status", detail = "fetching data", value = 0, {
       Sys.sleep(3)
-      incProgress(0.5, detail = "computing results")
-      # Perform lots of calculations that may take some time
-      Sys.sleep(4)
-      incProgress(0.5, detail = "part two")
-      Sys.sleep(2)
-      show(selector = "#navbar li a[data-value=tabPreprocessing]")
       
-    })
+      incProgress(0.1, detail = "Loading required library")
+      library(simpleaffy)
+      library(RColorBrewer)
+      library(affyPLM)
+      
+      
+      incProgress(0.4, detail = "Normalising")
+       celfiles <- read.affy(covdesc="phenodata.txt", path="data")
+       celfiles.gcrma <- gcrma(celfiles)
+      # # set colour palette
+       
+       incProgress(0.4, detail = "Plotting Boxplot ")
+       
+       cols <- brewer.pal(8, "Set1")
+       # plot a boxplot of unnormalised intensity values
+       
+       output$boxPlot1 <- renderPlot({
+         boxplot(celfiles, col=cols)
+       })
+       
+       output$boxplot2 <- renderPlot({
+         boxplot(celfiles.gcrma, col=cols)
+       })
+       # the boxplots are somewhat skewed by the normalisation algorithm
+       # and it is often more informative to look at density plots
+        # Plot a density vs log intensity histogram for the unnormalised data
+        incProgress(0.7, detail = "Plotting Histogram ")
+        
+        output$histogram1 <- renderPlot({
+          hist(celfiles, col=cols)
+        })
+       # Plot a density vs log intensity histogram for the normalised data
+        output$histogram2 <- renderPlot({
+          hist(celfiles.gcrma, col=cols)
+        })
+     
+      
+    }
+    
+    )
+    toggle(selector = "#navbar li a[data-value=tabPreprocessing]")
+    
     
   })
   
@@ -137,7 +155,7 @@ shinyServer(function(input, output,session) {
       incProgress(0.5, detail = "part two")
       Sys.sleep(2)
       
-      show(selector = "#navbar li a[data-value=tabGeneSelection]")
+     toggle(selector = "#navbar li a[data-value=tabGeneSelection]")
       
     })
     
@@ -157,13 +175,11 @@ shinyServer(function(input, output,session) {
       Sys.sleep(4)
       incProgress(0.5, detail = "part two")
       Sys.sleep(2)
-      show(selector = "#navbar li a[data-value=tabPlot]")
+      toggle(selector = "#navbar li a[data-value=tabPlot]")
       
     })
-
+    
   })
   
   ####################################################################################
 })
-
-
