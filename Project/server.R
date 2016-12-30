@@ -18,6 +18,7 @@ library(R.utils)
 options(shiny.maxRequestSize=500*1024^2)
 shinyServer(function(input, output,session) {
   celfiles=NULL
+  celfiles.filtered=NULL
   count<-0;
   #########INput file in working directory
   filedata <- reactive({
@@ -78,9 +79,9 @@ shinyServer(function(input, output,session) {
   #hide tabs
   observe({
     
-    hide(selector = "#navbar li a[data-value=tabPreprocessing]")
-    hide(selector = "#navbar li a[data-value=tabGeneSelection]")
-    hide(selector = "#navbar li a[data-value=tabPlot]")
+    #hide(selector = "#navbar li a[data-value=tabPreprocessing]")
+    #hide(selector = "#navbar li a[data-value=tabGeneSelection]")
+    #hide(selector = "#navbar li a[data-value=tabPlot]")
   })
   ############################################################################################################
   #button prepocesiing
@@ -103,7 +104,6 @@ shinyServer(function(input, output,session) {
       celfiles.gcrma <- gcrma(celfiles)
 
 
-       nsFilter(celfiles.gcrma, require.entrez=FALSE, remove.dupEntrez=FALSE)
 
 
 
@@ -140,11 +140,14 @@ shinyServer(function(input, output,session) {
       
       incProgress(0.8, detail = "Plotting Quality control ")
       aqc<-qc(celfiles)
-
-      incProgress(0.8, detail = "Plotting Quality control 2")
       output$qualitycontrolplot <- renderPlot({
         plot(aqc)
-     })
+      })
+      
+      incProgress(0.8, detail = "Filtering")
+      celfiles.filtered<-nsFilter(celfiles.gcrma, require.entrez=FALSE, remove.dupEntrez=FALSE)
+      
+    
     
     
   
@@ -154,7 +157,11 @@ shinyServer(function(input, output,session) {
      
      
    })
-  
+  ######################################button filtered data Download########################################
+  observeEvent(input$btnDownloadFilteredData,
+               {
+                 write.table(celfiles.filtered, "Filtered.txt", sep="\t", quote=FALSE)
+               })
   ############################################################################################################
   #button geneselection
   observeEvent(input$btnGeneSelection,{
@@ -182,24 +189,26 @@ shinyServer(function(input, output,session) {
     
     if(input$select == 'hgu133plus2'){
       
-      source("https://bioconductor.org/biocLite.R")
-      biocLite("hgu133plus2.db")
+      library(hgu133plus2.db)
+      library(annotate)
+      
       
     } 
     else if(input$select == 'hgu95av2'){
-      source("https://bioconductor.org/biocLite.R")
-      biocLite("hgu95av2.db")
+     
     }
+    
+    
   })   
-  output$state <- renderText(x())
+  output$state <- renderText(input$select)
+  
   ############################################################################################################
   #Submit gene selection method
   r <- eventReactive(input$suBmit,{
     
     
     if(input$radio == 'SAM'){
-      source("https://bioconductor.org/biocLite.R")
-      biocLite("hgu95av2.db")
+   
     }
     if(input$radio == 'LIMMA'){
       source("https://bioconductor.org/biocLite.R")
@@ -208,7 +217,7 @@ shinyServer(function(input, output,session) {
     }
     
   })
-  output$lol <- renderText(r())
+  output$lol <- renderText(input$radio)
   
   ############################################################################################################
   #button plot

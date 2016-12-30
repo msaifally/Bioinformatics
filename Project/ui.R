@@ -45,15 +45,16 @@ shinyUI(fluidPage(title="MICROARRAY", useShinyjs(),
                              tabPanel(title = "Prepocessing",value= "tabPreprocessing",
                                       icon = icon("cogs"),
                                       tabsetPanel(
-                                        tabPanel(style = "background-color: #ffffff;",title="Boxplot","Before Normalisation",plotOutput("boxPlot1"),
+                                        tabPanel(style = "background-color: #ffffff;",title="Boxplot",strong("Before Normalisation"),plotOutput("boxPlot1"),
                                                  tags$hr(style="color = #000000"),
-                                                  "After Normalisation", plotOutput("boxplot2")),
-                                        tabPanel(style = "background-color: #ffffff;",title="Histogram","Before Normalisation",plotOutput("histogram1"),
-                                                 "After Normalisation", plotOutput("histogram2")),
-                                        tabPanel(style = "background-color: #ffffff;",title="Quality Control","Stats",plotOutput("qualitycontrolplot"),
+                                                  strong("After Normalisation"), plotOutput("boxplot2")),
+                                        tabPanel(style = "background-color: #ffffff;",title="Histogram",strong("Before Normalisation"),plotOutput("histogram1"),
+                                                 strong("After Normalisation"), plotOutput("histogram2")),
+                                        tabPanel(style = "background-color: #ffffff;",title="Quality Control",strong("Stats"),plotOutput("qualitycontrolplot"),
                                                  tags$hr(style="color = #000000"))
                                       ),
-                                      tags$footer(actionButton("btnGeneSelection", "Gene Selection",class="btn-secondary",icon = icon("mail-forward")),
+                                      tags$footer(actionButton("btnDownloadFilteredData", "Filtered Data",class="btn-secondary",icon = icon("download")),
+                                                  actionButton("btnGeneSelection", "Gene Selection",class="btn-secondary",icon = icon("mail-forward")),
                                                   align = "center")
                                       ),
                              #panel Gene- Selection
