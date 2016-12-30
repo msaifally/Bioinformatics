@@ -1,23 +1,57 @@
 @import url("//fonts.googleapis.com/css?family=Lobster|Cabin:400,700");
 
-h1 {
-  font-family: 'Lobster', cursive;
+h3 {
+  font-family: "Georgia", Times, "Times New Roman", serif;
   font-weight: 500;
   line-height: 1.1;
-  color: #ad1d28;
+ # color: #344152;
+ color:#35586C;
 }
 
 body {
-  background-color: #CAC4C4;
+ background-color: #2E2E2E;
 }
-
+navbarPage{
+	position:fixed;
+	left:0px;
+	right:0px;
+}
 #sidebar
 {
-background-color: #E0D6D6;
+background-color: #353F3E;
+
+color:white;
+  
+	 height:100%;
+	left:0px;
+	bottom:0px;
+    top:0 px;
+  
 }
 
-#main-panel
+#mainpanel
 {
-background-color: #E0D6D6;
-width:3;
+background-color: white;
+height = "400px";
+}
+
+tabPanel{
+	background-color:#FFFFFF;
+	color:#FFFFFF;
+}
+hr{
+   color: #000000;
+    background-color: #000000;
+}
+footer{
+	 
+    position:fixed;
+    bottom:0;
+    left:0;                                                 
+    width:100%;
+    height:8%;   /* Height of the footer */
+    color: white;
+    padding: 10px;
+    background-color: black;
+     z-index: 1000;"
 }
